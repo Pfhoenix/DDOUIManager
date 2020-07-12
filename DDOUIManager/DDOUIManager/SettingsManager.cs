@@ -32,7 +32,6 @@ namespace DDOUIManager
 			}
 		}
 
-		public string DDOInstallPath;
 		public string BackupPath;
 		public string WinRARPath;
 

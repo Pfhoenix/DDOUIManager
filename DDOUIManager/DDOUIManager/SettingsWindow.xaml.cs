@@ -14,18 +14,13 @@ namespace DDOUIManager
 		{
 			InitializeComponent();
 
-			txtDDOInstallPath.Text = SettingsManager.data.DDOInstallPath;
 			txtBackupPath.Text = SettingsManager.data.BackupPath;
+			txtWinRARPath.Text = SettingsManager.data.WinRARPath;
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			bool save = false;
-			if (Directory.Exists(txtDDOInstallPath.Text))
-			{
-				SettingsManager.data.DDOInstallPath = txtDDOInstallPath.Text;
-				save = true;
-			}
 			if (Directory.Exists(txtBackupPath.Text))
 			{
 				SettingsManager.data.BackupPath = txtBackupPath.Text;
@@ -46,11 +41,6 @@ namespace DDOUIManager
 		{
 			System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
 			if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK) tb.Text = fbd.SelectedPath;
-		}
-
-		private void FindDDOInstallPath_Click(object sender, RoutedEventArgs e)
-		{
-			SetTextFromFolderSearch(txtDDOInstallPath);
 		}
 
 		private void FindBackupPath_Click(object sender, RoutedEventArgs e)

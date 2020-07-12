@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DDOUIManager"
         mc:Ignorable="d"
-        Title="Settings" Height="110" Width="370" WindowStyle="ToolWindow">
+        Title="Settings" Height="90" Width="370" WindowStyle="ToolWindow">
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="2*"/>
@@ -14,20 +14,14 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="25"/>
 			<RowDefinition Height="25"/>
-			<RowDefinition Height="25"/>
 		</Grid.RowDefinitions>
-		<Label HorizontalContentAlignment="Right">DDO Install Path :</Label>
-		<Label Grid.Row="1" HorizontalContentAlignment="Right">Backup Path :</Label>
-		<Label Grid.Row="2" HorizontalContentAlignment="Right">WinRAR Path :</Label>
-		<DockPanel Grid.Column="1">
-			<Button DockPanel.Dock="Right" Margin="0,3,3,3" Click="FindDDOInstallPath_Click">...</Button>
-			<TextBox Name="txtDDOInstallPath" Margin="0,3,0,3"/>
-		</DockPanel>
-		<DockPanel Grid.Column="1" Grid.Row="1">
+		<Label Grid.Row="0" HorizontalContentAlignment="Right">Backup Path :</Label>
+		<Label Grid.Row="1" HorizontalContentAlignment="Right">WinRAR Path :</Label>
+		<DockPanel Grid.Column="1" Grid.Row="0">
 			<Button DockPanel.Dock="Right" Margin="0,3,3,3" Click="FindBackupPath_Click">...</Button>
 			<TextBox Name="txtBackupPath" Margin="0,3,0,3"/>
 		</DockPanel>
-		<DockPanel Grid.Column="1" Grid.Row="2">
+		<DockPanel Grid.Column="1" Grid.Row="1">
 			<Button DockPanel.Dock="Right" Margin="0,3,3,3" Click="FindWinRARPath_Click">...</Button>
 			<TextBox Name="txtWinRARPath" Margin="0,3,0,3"/>
 		</DockPanel>
