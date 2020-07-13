@@ -65,9 +65,13 @@ namespace DDOUIManager
 				if (skin != null) Skins.Add(skin);
 			}
 			lvSkins.ItemsSource = Skins;
+		}
 
+		void RefreshSkinList()
+		{
 			CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(lvSkins.ItemsSource);
 			view.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+			view.Refresh();
 		}
 
 		private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
@@ -122,8 +126,22 @@ namespace DDOUIManager
 				if (string.IsNullOrWhiteSpace(n)) continue;
 				if (Skins.Exists(s => s.Name == n))
 				{
-					MessageBoxResult r = MessageBox.Show("There is already a skin called '" + n + "' setup. Do you want to overwrite it?", "Overwrite existing skin", MessageBoxButton.YesNo, MessageBoxImage.Question);
-					if (r == MessageBoxResult.No) continue;
+					SkinNameConflictWindow sncw = new SkinNameConflictWindow(n, Skins.Select(sn => sn.Name).ToList());
+					sncw.Owner = this;
+					if (sncw.ShowDialog() == true)
+					{
+						if (sncw.SelectedOption == SkinNameConflictWindow.SkipImporting) continue;
+						else if (sncw.SelectedOption == SkinNameConflictWindow.RenameExisting)
+						{
+							var skin = Skins.Find(s => s.Name == n);
+							skin.Rename(sncw.NewSkinName);
+						}
+						else if (sncw.SelectedOption == SkinNameConflictWindow.RenameImporting)
+						{
+							xe.SetAttribute("Name", sncw.NewSkinName);
+						}
+					}
+					else continue;
 				}
 				XDocPaths.Add(Path.GetDirectoryName(f));
 				XDocsToProcess.Add(doc);
@@ -250,14 +268,10 @@ namespace DDOUIManager
 
 		void ProcessNewSkin(DDOUISkin skin)
 		{
-			DDOUISkin old = Skins.Find(s => s.Name == skin.Name);
-			if (old != null)
-			{
-				//lvSkins.Items.Remove(old);
-				Skins.Remove(old);
-			}
+			DDOUISkin old = Skins.Find(s => string.Compare(s.Name, skin.Name, true) == 0);
+			if (old != null) Skins.Remove(old);
 			Skins.Add(skin);
-			//lvSkins.Items.Add(skin);
+			RefreshSkinList();
 		}
 
 		void ProcessXDocsDone()
@@ -301,13 +315,33 @@ namespace DDOUIManager
 			}
 		}
 
-
 		private void AddSkinFolderMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
+			Cursor = Cursors.Wait;
+			if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{
+				ProcessFolderToAddSkins(fbd.SelectedPath);
+			}
+			else Cursor = Cursors.Arrow;
+		}
+
+		private void BackupSkinsMenuItem_Click(object sender, RoutedEventArgs e)
 		{
 
 		}
 
-		private void BackupSkinsMenuItem_Click(object sender, RoutedEventArgs e)
+		private void ApplyMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+
+		}
+
+		private void RenameSkin_Click(object sender, RoutedEventArgs e)
+		{
+
+		}
+
+		private void DeleteSkin_Click(object sender, RoutedEventArgs e)
 		{
 
 		}

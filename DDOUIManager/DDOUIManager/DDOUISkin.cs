@@ -83,6 +83,41 @@ namespace DDOUIManager
 			}
 		}
 
+		public string Rename(string newname)
+		{
+			int i = RootPath.LastIndexOf(Name, StringComparison.OrdinalIgnoreCase);
+			string newrp = Path.Combine(RootPath.Substring(0, i), newname);
+			try
+			{
+				Directory.Move(RootPath, newrp);
+				RootPath = newrp;
+			}
+			catch
+			{
+				return "Error moving the skin folder to the new location!";
+			}
+
+			XmlDocument doc = new XmlDocument();
+			try
+			{
+				string docpath = Path.Combine(RootPath, "SkinDefinition.xml");
+				doc.Load(docpath);
+				XmlElement xe = doc.GetElementsByTagName("SkinName")[0] as XmlElement;
+				xe.SetAttribute("Name", newname);
+				doc.Save(docpath);
+			}
+			catch
+			{
+				return "Error modifying the SkinDefinition.xml file for the skin!";
+			}
+
+			Name = newname;
+			foreach (var a in Assets)
+				a.AssetSource = newname;
+
+			return null;
+		}
+
 		public override string ToString()
 		{
 			return Name;

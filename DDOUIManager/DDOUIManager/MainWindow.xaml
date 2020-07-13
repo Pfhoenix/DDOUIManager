@@ -46,7 +46,17 @@
 				<ProgressBar Name="pbProgressBar" Height="16" Width="240"/>
 			</StatusBarItem>
 		</StatusBar>
-		<ListView DockPanel.Dock="Left" Name="lvSkins" Width="200"></ListView>
+		<ListView DockPanel.Dock="Left" Name="lvSkins" Width="200">
+			<ListView.Resources>
+				<ContextMenu x:Key="ItemCM">
+					<MenuItem Click="ApplyMenuItem_Click" Header="Apply to DDO"/>
+					<Separator/>
+					<MenuItem Click="RenameSkin_Click" Header="Rename"/>
+					<Separator/>
+					<MenuItem Click="DeleteSkin_Click" Header="Delete"/>
+				</ContextMenu>
+			</ListView.Resources>
+		</ListView>
 		<TreeView Name="tvSkin"/>
 	</DockPanel>
 </Window>

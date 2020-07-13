@@ -1,0 +1,15 @@
+﻿<Window x:Class="DDOUIManager.SkinNameConflictWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DDOUIManager"
+        mc:Ignorable="d"
+        Title="Skin Name Conflict Resolution" Height="135" Width="400" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow" ResizeMode="NoResize">
+    <StackPanel>
+		<Label Name="lbl">The skin name %N already exists. How do you want to proceed?</Label>
+		<ComboBox Name="cbOptions" SelectionChanged="Options_SelectionChanged" Height="24" SelectedValue="{Binding Path=SelectedOption}" SelectedIndex="0"/>
+		<TextBox Name="tbRename" Height="24" IsEnabled="False" TextChanged="Rename_TextChanged" KeyDown="Rename_KeyDown" Text="{Binding Path=NewSkinName, UpdateSourceTrigger=PropertyChanged}" />
+		<Button Name="btnOkay" Margin="130,5,130,0" Click="Okay_Clicked">Okay</Button>
+	</StackPanel>
+</Window>
