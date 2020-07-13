@@ -29,12 +29,25 @@ namespace DDOUIManager
 			}
 		}
 
-		public static DDOUISkin Load(string rp)
+		public DDOUISkinAsset AddAsset(string n, string p, string s)
 		{
-			XmlDocument doc = new XmlDocument();
+			if (AssetCache.ContainsKey(n)) return null;
+			DDOUISkinAsset sa = new DDOUISkinAsset
+			{
+				AssetName = n,
+				AssetPath = p,
+				AssetSource = s
+			};
+			Assets.Add(sa);
+			AssetCache[sa.AssetName] = sa;
+
+			return sa;
+		}
+
+		public static DDOUISkin Load(XmlDocument doc, string rp)
+		{
 			try
 			{
-				doc.Load(Path.Combine(rp, "SkinDefinition.xml"));
 				XmlElement xe = doc.GetElementsByTagName("SkinName")[0] as XmlElement;
 				DDOUISkin skin = new DDOUISkin()
 				{
@@ -44,17 +57,7 @@ namespace DDOUIManager
 				if (string.IsNullOrWhiteSpace(skin.Name)) return null;
 				var mas = doc.GetElementsByTagName("Mapping");
 				foreach (XmlElement ma in mas)
-				{
-					DDOUISkinAsset sa = new DDOUISkinAsset
-					{
-						AssetName = ma.GetAttribute("ArtAssetID"),
-						AssetPath = Path.Combine(rp, ma.GetAttribute("FileName")),
-						AssetSource = skin.Name
-					};
-					if (skin.AssetCache.ContainsKey(sa.AssetName)) continue;
-					skin.Assets.Add(sa);
-					skin.AssetCache[sa.AssetName] = sa;
-				}
+					skin.AddAsset(ma.GetAttribute("ArtAssetID"), Path.Combine(rp, ma.GetAttribute("FileName")), skin.Name);
 
 				return skin;
 			}
@@ -62,6 +65,27 @@ namespace DDOUIManager
 			{
 				return null;
 			}
+		}
+
+		public static DDOUISkin Load(string sdfile)
+		{
+			XmlDocument doc = new XmlDocument();
+			try
+			{
+				doc.Load(sdfile);
+				string rp = Path.GetDirectoryName(sdfile);
+
+				return Load(doc, rp);
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
+		public override string ToString()
+		{
+			return Name;
 		}
 	}
 }
