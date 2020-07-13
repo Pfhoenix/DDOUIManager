@@ -59,6 +59,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DDOUISkin.cs" />
+    <Compile Include="CompressFileWindow.xaml.cs">
+      <DependentUpon>CompressFileWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DecompressFileWindow.xaml.cs">
       <DependentUpon>DecompressFileWindow.xaml</DependentUpon>
     </Compile>
@@ -69,6 +72,10 @@
     <Compile Include="SkinNameConflictWindow.xaml.cs">
       <DependentUpon>SkinNameConflictWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="CompressFileWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="DecompressFileWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

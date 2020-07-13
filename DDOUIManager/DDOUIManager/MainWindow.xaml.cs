@@ -21,7 +21,7 @@ namespace DDOUIManager
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		readonly string DDOPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Dungeons and Dragons Online\\UI\\Skins");
+		readonly string DDOPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Dungeons and Dragons Online\\UI\\Skins\\DDO UI Manager");
 		readonly string SkinsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Skins");
 		readonly string TempPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "temp");
 
@@ -57,6 +57,8 @@ namespace DDOUIManager
 				}
 			}
 
+			miBackupSkins.IsEnabled = !string.IsNullOrWhiteSpace(SettingsManager.data.BackupPath);
+
 			// scan local Skins directory for "installed" skins
 			var skindefs = Directory.GetFiles(SkinsPath, "SkinDefinition.xml", SearchOption.AllDirectories);
 			foreach (var sd in skindefs)
@@ -70,8 +72,8 @@ namespace DDOUIManager
 		void RefreshSkinList()
 		{
 			CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(lvSkins.ItemsSource);
-			view.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
 			view.Refresh();
+			view.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
 		}
 
 		private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
@@ -83,6 +85,7 @@ namespace DDOUIManager
 		{
 			SettingsWindow sw = new SettingsWindow();
 			sw.ShowDialog();
+			miBackupSkins.IsEnabled = !string.IsNullOrWhiteSpace(SettingsManager.data.BackupPath);
 		}
 
 		bool DeleteFolder(string path)
@@ -157,8 +160,8 @@ namespace DDOUIManager
 				BackgroundWorker bw = new BackgroundWorker();
 				bw.WorkerReportsProgress = true;
 				bw.DoWork += ProcessXDocs_DoWork;
-				bw.ProgressChanged += ProcessXDocs_ProgressChanged;
-				bw.RunWorkerCompleted += ProcessXDocs_Completed;
+				bw.ProgressChanged += Process_ProgressChanged;
+				bw.RunWorkerCompleted += Process_Completed;
 				bw.RunWorkerAsync();
 			}
 		}
@@ -247,14 +250,14 @@ namespace DDOUIManager
 			XDocsToProcess.Clear();
 		}
 
-		private void ProcessXDocs_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		private void Process_ProgressChanged(object sender, ProgressChangedEventArgs e)
 		{
 			Dispatcher.InvokeAsync(new Action(() => UpdateStatusBar((StatusBarUpdate)e.UserState)));
 		}
 
-		private void ProcessXDocs_Completed(object sender, RunWorkerCompletedEventArgs e)
+		private void Process_Completed(object sender, RunWorkerCompletedEventArgs e)
 		{
-			Dispatcher.InvokeAsync(ProcessXDocsDone);
+			Dispatcher.InvokeAsync(ProcessDone);
 		}
 
 		void UpdateStatusBar(StatusBarUpdate update)
@@ -274,13 +277,18 @@ namespace DDOUIManager
 			RefreshSkinList();
 		}
 
-		void ProcessXDocsDone()
+		void ProcessDone()
 		{
 			Cursor = Cursors.Arrow;
 			tbStatusBarText.Text = "Done";
 			tbProgressText.Text = null;
 			pbProgressBar.Value = 0;
 
+			DisplayProcessErrors();
+		}
+
+		void DisplayProcessErrors()
+		{
 			if (ProcessErrors.Length > 0)
 			{
 				string ef = Path.Combine(TempPath, "errors.txt");
@@ -328,12 +336,91 @@ namespace DDOUIManager
 
 		private void BackupSkinsMenuItem_Click(object sender, RoutedEventArgs e)
 		{
+			Cursor = Cursors.Wait;
+			foreach (var skin in Skins)
+			{
+				tbStatusBarText.Text = "Backing up " + skin.Name;
+				CompressFileWindow cfw = new CompressFileWindow();
+				cfw.Owner = this;
+				cfw.Initialize(SettingsManager.data.BackupPath, skin.RootPath);
+				cfw.ShowDialog();
+				if (!string.IsNullOrWhiteSpace(cfw.ErrorMessage))
+				{
+					MessageBox.Show(cfw.ErrorMessage, "Error backing up " + skin.Name, MessageBoxButton.OK, MessageBoxImage.Error);
+				}
+			}
 
+			Cursor = Cursors.Arrow;
+			tbStatusBarText.Text = "Done.";
 		}
 
+		DDOUISkin SkinToApply;
 		private void ApplyMenuItem_Click(object sender, RoutedEventArgs e)
 		{
+			SkinToApply = lvSkins.SelectedItem as DDOUISkin;
+			if (SkinToApply == null) return;
 
+			try
+			{
+				if (Directory.Exists(DDOPath)) DeleteFolder(DDOPath);
+				Directory.CreateDirectory(DDOPath);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message, "Error!", MessageBoxButton.OK, MessageBoxImage.Stop);
+				return;
+			}
+
+			Cursor = Cursors.Wait;
+
+			BackgroundWorker bw = new BackgroundWorker();
+			bw.WorkerReportsProgress = true;
+			bw.DoWork += ApplySkin_DoWork;
+			bw.ProgressChanged += Process_ProgressChanged;
+			bw.RunWorkerCompleted += Process_Completed;
+			bw.RunWorkerAsync();
+		}
+
+		private void ApplySkin_DoWork(object sender, DoWorkEventArgs e)
+		{
+			ProcessErrors = new StringBuilder();
+			BackgroundWorker bw = sender as BackgroundWorker;
+			StatusBarUpdate sbu;
+
+			sbu.MainString = "Applying " + SkinToApply.Name + " ...";
+			sbu.ProgressBarMin = 0;
+
+			ProcessErrors.Clear();
+			var files = Directory.GetFiles(SkinToApply.RootPath);
+			sbu.ProgressBarMax = files.Length;
+			for (int i = 0; i < files.Length; i++)
+			{
+				try
+				{
+					sbu.SecondaryString = (i + 1).ToString();
+					sbu.ProgressBarValue = i + 1;
+					bw.ReportProgress(i, sbu);
+					File.Copy(files[i], Path.Combine(DDOPath, Path.GetFileName(files[i])));
+				}
+				catch (Exception ex)
+				{
+					ProcessErrors.AppendLine(ex.Message);
+				}
+			}
+
+			XmlDocument doc = new XmlDocument();
+			try
+			{
+				string docpath = Path.Combine(DDOPath, "SkinDefinition.xml");
+				doc.Load(docpath);
+				XmlElement xe = doc.GetElementsByTagName("SkinName")[0] as XmlElement;
+				xe.SetAttribute("Name", "DDO UI Manager");
+				doc.Save(docpath);
+			}
+			catch (Exception ex)
+			{
+				ProcessErrors.AppendLine(ex.Message);
+			}
 		}
 
 		private void RenameSkin_Click(object sender, RoutedEventArgs e)
@@ -344,6 +431,12 @@ namespace DDOUIManager
 		private void DeleteSkin_Click(object sender, RoutedEventArgs e)
 		{
 
+		}
+
+		private void Skin_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (lvSkins.SelectedItem == null) lvSkins.ContextMenu = null;
+			else lvSkins.ContextMenu = lvSkins.Resources["ItemCM"] as ContextMenu;
 		}
 	}
 }

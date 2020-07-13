@@ -8,8 +8,8 @@
         Title="Skin Name Conflict Resolution" Height="135" Width="400" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow" ResizeMode="NoResize">
     <StackPanel>
 		<Label Name="lbl">The skin name %N already exists. How do you want to proceed?</Label>
-		<ComboBox Name="cbOptions" SelectionChanged="Options_SelectionChanged" Height="24" SelectedValue="{Binding Path=SelectedOption}" SelectedIndex="0"/>
+		<ComboBox Name="cbOptions" SelectionChanged="Options_SelectionChanged" Height="24" SelectedValue="{Binding Path=SelectedOption}"/>
 		<TextBox Name="tbRename" Height="24" IsEnabled="False" TextChanged="Rename_TextChanged" KeyDown="Rename_KeyDown" Text="{Binding Path=NewSkinName, UpdateSourceTrigger=PropertyChanged}" />
-		<Button Name="btnOkay" Margin="130,5,130,0" Click="Okay_Clicked">Okay</Button>
+		<Button Name="btnOkay" Margin="130,5,130,0" Click="Okay_Clicked" IsEnabled="False">Okay</Button>
 	</StackPanel>
 </Window>

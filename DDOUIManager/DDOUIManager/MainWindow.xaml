@@ -17,7 +17,7 @@
 				<MenuItem Header="Add Skin Archive to List" Click="AddSkinArchiveMenuItem_Click"/>
 				<MenuItem Header="Add Skin Folder to List" Click="AddSkinFolderMenuItem_Click"/>
 				<Separator/>
-				<MenuItem Header="Backup Skins" Click="BackupSkinsMenuItem_Click"/>
+				<MenuItem Header="Backup Skins" Click="BackupSkinsMenuItem_Click" Name="miBackupSkins"/>
 			</MenuItem>
 		</Menu>
 		<StatusBar DockPanel.Dock="Bottom" Height="22" VerticalAlignment="Bottom">
@@ -46,7 +46,7 @@
 				<ProgressBar Name="pbProgressBar" Height="16" Width="240"/>
 			</StatusBarItem>
 		</StatusBar>
-		<ListView DockPanel.Dock="Left" Name="lvSkins" Width="200">
+		<ListView DockPanel.Dock="Left" Name="lvSkins" Width="200" SelectionChanged="Skin_SelectionChanged">
 			<ListView.Resources>
 				<ContextMenu x:Key="ItemCM">
 					<MenuItem Click="ApplyMenuItem_Click" Header="Apply to DDO"/>
