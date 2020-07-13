@@ -6,11 +6,6 @@ using System.Windows.Controls;
 
 namespace DDOUIManager
 {
-	public class SkinNameConflictDecision
-	{
-		public string SelectedOption { get; set; }
-		public string NewSkinName { get; set; }
-	}
 	/// <summary>
 	/// Interaction logic for SkinNameConflictWindow.xaml
 	/// </summary>
@@ -32,7 +27,6 @@ namespace DDOUIManager
 
 		public string SelectedOption { get; set; }
 		public string NewSkinName { get; set; }
-		public SkinNameConflictDecision Decision = new SkinNameConflictDecision();
 
 		public SkinNameConflictWindow(string sn, List<string> esn)
 		{

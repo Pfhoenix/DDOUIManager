@@ -425,7 +425,19 @@ namespace DDOUIManager
 
 		private void RenameSkin_Click(object sender, RoutedEventArgs e)
 		{
+			DDOUISkin skin = lvSkins.SelectedItem as DDOUISkin;
+			RenameSkinWindow rsw = new RenameSkinWindow(skin.Name, Skins.Select(s => s.Name).ToList());
+			rsw.Owner = this;
+			if (rsw.ShowDialog() == true)
+			{
+				string errors = skin.Rename(rsw.NewSkinName);
+				if (!string.IsNullOrWhiteSpace(errors))
+				{
+					MessageBox.Show(errors, "Rename Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				}
+			}
 
+			RefreshSkinList();
 		}
 
 		private void DeleteSkin_Click(object sender, RoutedEventArgs e)
@@ -437,6 +449,14 @@ namespace DDOUIManager
 		{
 			if (lvSkins.SelectedItem == null) lvSkins.ContextMenu = null;
 			else lvSkins.ContextMenu = lvSkins.Resources["ItemCM"] as ContextMenu;
+		}
+
+		private void Skin_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			Point pt = e.GetPosition(lvSkins);
+			var hit = System.Windows.Media.VisualTreeHelper.HitTest(lvSkins, pt);
+			if (hit.VisualHit is TextBlock) { }
+			else lvSkins.SelectedItem = null;
 		}
 	}
 }

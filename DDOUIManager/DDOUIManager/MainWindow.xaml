@@ -46,7 +46,7 @@
 				<ProgressBar Name="pbProgressBar" Height="16" Width="240"/>
 			</StatusBarItem>
 		</StatusBar>
-		<ListView DockPanel.Dock="Left" Name="lvSkins" Width="200" SelectionChanged="Skin_SelectionChanged">
+		<ListView DockPanel.Dock="Left" Name="lvSkins" Width="200" SelectionChanged="Skin_SelectionChanged" PreviewMouseRightButtonDown="Skin_PreviewMouseRightButtonDown">
 			<ListView.Resources>
 				<ContextMenu x:Key="ItemCM">
 					<MenuItem Click="ApplyMenuItem_Click" Header="Apply to DDO"/>
