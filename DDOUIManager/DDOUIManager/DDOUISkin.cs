@@ -15,7 +15,7 @@ namespace DDOUIManager
 
 	public class DDOUISkin
 	{
-		public string Name;
+		public string Name { get; set; }
 		public string RootPath;
 		public List<DDOUISkinAsset> Assets = new List<DDOUISkinAsset>();
 		Dictionary<string, DDOUISkinAsset> AssetCache = new Dictionary<string, DDOUISkinAsset>();

@@ -426,6 +426,7 @@ namespace DDOUIManager
 		private void RenameSkin_Click(object sender, RoutedEventArgs e)
 		{
 			DDOUISkin skin = lvSkins.SelectedItem as DDOUISkin;
+			if (skin == null) return;
 			RenameSkinWindow rsw = new RenameSkinWindow(skin.Name, Skins.Select(s => s.Name).ToList());
 			rsw.Owner = this;
 			if (rsw.ShowDialog() == true)
@@ -442,7 +443,15 @@ namespace DDOUIManager
 
 		private void DeleteSkin_Click(object sender, RoutedEventArgs e)
 		{
+			DDOUISkin skin = lvSkins.SelectedItem as DDOUISkin;
+			if (skin == null) return;
 
+			if (MessageBox.Show("Are you sure you want to delete " + skin.Name + "?", "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+
+			Skins.Remove(skin);
+			DeleteFolder(skin.RootPath);
+
+			RefreshSkinList();
 		}
 
 		private void Skin_SelectionChanged(object sender, SelectionChangedEventArgs e)
