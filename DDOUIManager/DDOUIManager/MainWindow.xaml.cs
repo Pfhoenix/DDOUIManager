@@ -30,6 +30,13 @@ namespace DDOUIManager
 		public MainWindow()
 		{
 			InitializeComponent();
+#if DEBUG
+			miDeveloper.IsEnabled = true;
+			miDeveloper.SetValue(VisibilityProperty, Visibility.Visible);
+#else
+			miDeveloper.IsEnabled = false;
+			miDeveloper.SetValue(VisibilityProperty, Visibility.Hidden);
+#endif
 
 			if (!Directory.Exists(SkinsPath))
 			{
@@ -466,6 +473,12 @@ namespace DDOUIManager
 			var hit = System.Windows.Media.VisualTreeHelper.HitTest(lvSkins, pt);
 			if (hit.VisualHit is TextBlock) { }
 			else lvSkins.SelectedItem = null;
+		}
+
+		private void GenerateCategoryTreeMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			SkinAssetTreeWindow satw = new SkinAssetTreeWindow();
+			satw.ShowDialog();
 		}
 	}
 }

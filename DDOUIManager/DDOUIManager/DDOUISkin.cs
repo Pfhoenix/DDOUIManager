@@ -13,6 +13,14 @@ namespace DDOUIManager
 		public string AssetSource;
 	}
 
+	public class DDOUISkinAssetCategory
+	{
+		public string CategoryName;
+		public List<string> AssetNames;
+		public DDOUISkinAssetCategory ParentCategory;
+		public List<DDOUISkinAssetCategory> ChildCategories;
+	}
+
 	public class DDOUISkin
 	{
 		public string Name { get; set; }

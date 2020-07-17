@@ -72,6 +72,9 @@
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SkinAssetTreeWindow.xaml.cs">
+      <DependentUpon>SkinAssetTreeWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SkinNameConflictWindow.xaml.cs">
       <DependentUpon>SkinNameConflictWindow.xaml</DependentUpon>
     </Compile>
@@ -100,6 +103,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SkinAssetTreeWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

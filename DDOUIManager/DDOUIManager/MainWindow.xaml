@@ -19,6 +19,9 @@
 				<Separator/>
 				<MenuItem Header="Backup Skins" Click="BackupSkinsMenuItem_Click" Name="miBackupSkins"/>
 			</MenuItem>
+			<MenuItem Header="_Developer" Name="miDeveloper">
+				<MenuItem Header="Generate Category Tree From Folder" Click="GenerateCategoryTreeMenuItem_Click"/>
+			</MenuItem>
 		</Menu>
 		<StatusBar DockPanel.Dock="Bottom" Height="22" VerticalAlignment="Bottom">
 			<StatusBar.ItemsPanel>
